@@ -1,4 +1,4 @@
-/* Basic Reset */
+
 * {
     margin: 0;
     padding: 0;
@@ -13,12 +13,11 @@ body {
 /* Custom Font */
 @font-face {
     font-family: 'customfont';
-    src: url('/fonts/Julietta-Messie.otf');
+    src: url('Julietta-Messie.otf');
 }
 
-/* Header Style */
 .heading {
-    font-family: 'customfont';
+    font-family: "Ephesis", cursive;
     font-weight: 300;
     font-size: 96px;
     text-align: center;
