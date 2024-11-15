@@ -1,8 +1,5 @@
-const cloudName = "dvkugkqst"; 
-const uploadPreset = "gallery"; 
-
-// Array to store the public_ids of images
-let imagePublicIds = [];
+const cloudName = "dvkugkqst";  // Your Cloudinary cloud name
+const uploadPreset = "gallery"; // Your upload preset
 
 // Function to handle the image upload
 function uploadImage() {
@@ -26,11 +23,10 @@ function uploadImage() {
             })
             .then(response => response.json())
             .then(data => {
-                // Get the secure URL and public_id of the uploaded image
-                const imageUrl = data.secure_url;
-                const publicId = data.public_id;
+                const imageUrl = data.secure_url;  // URL of the uploaded image
+                const publicId = data.public_id;  // Cloudinary public ID of the image
 
-                // Add the new image data to your gallery
+                // Call the display function to show the image in the gallery
                 displayImage(imageUrl, publicId);
             })
             .catch(error => {
@@ -42,19 +38,17 @@ function uploadImage() {
     }
 }
 
+
 // Function to display the uploaded image in the gallery
-function displayImage(publicId) {
+function displayImage(imageUrl, publicId) {
     const imageGallery = document.getElementById('imageGallery');
     
-    // Create the image URL using Cloudinary's URL format
-    const imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${publicId}.jpg`;
-
     const imageCard = document.createElement('div');
     imageCard.classList.add('image-card');
-    imageCard.setAttribute('data-public-id', publicId);  // Store public_id for future deletion
+    imageCard.setAttribute('data-public-id', publicId);  
 
     const imgElement = document.createElement('img');
-    imgElement.src = imageUrl;
+    imgElement.src = imageUrl;  // Use the secure URL directly from Cloudinary's response
     imgElement.alt = 'Uploaded Image';
 
     const deleteButton = document.createElement('button');
@@ -73,6 +67,7 @@ function displayImage(publicId) {
     // Append image card to the gallery
     imageGallery.appendChild(imageCard);
 }
+
 
 // Delete image functionality
 function deleteImage(imageCard, publicId) {
