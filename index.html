@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <link href="style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Palanquin+Dark:wght@400;500;600;700&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <script src="https://upload.cdn.cloudinary.com"></script>
+</head>
+<body>
+    <h1 class="heading">Gallery</h1>
+    <div class="upload-container">
+        <h4>Upload Your Images</h4>
+        <input type="file" id="imageInput" multiple accept="image/*">
+        <button id="uploadButton" disabled>Upload</button>
+    </div>
+
+    <div class="image-gallery" id="imageGallery"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
