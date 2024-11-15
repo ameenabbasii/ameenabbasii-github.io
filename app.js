@@ -16,7 +16,7 @@ function uploadImage() {
             formData.append('file', file);
             formData.append('upload_preset', uploadPreset);
 
-            // Cloudinary upload URL
+            // Correct Cloudinary upload URL
             const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
             // Upload the image to Cloudinary
@@ -26,17 +26,12 @@ function uploadImage() {
             })
             .then(response => response.json())
             .then(data => {
-                // Get the public_id of the uploaded image
+                // Get the secure URL and public_id of the uploaded image
+                const imageUrl = data.secure_url;
                 const publicId = data.public_id;
 
-                // Add the new image public_id to the array
-                imagePublicIds.push(publicId);
-
-                // Store the image public_ids in localStorage (for persistence on page reload)
-                localStorage.setItem('imagePublicIds', JSON.stringify(imagePublicIds));
-
-                // Display the uploaded image
-                displayImage(publicId);
+                // Add the new image data to your gallery
+                displayImage(imageUrl, publicId);
             })
             .catch(error => {
                 console.error("Error uploading image:", error);
