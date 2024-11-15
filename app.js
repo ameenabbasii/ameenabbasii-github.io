@@ -1,6 +1,7 @@
 const cloudName = "dvkugkqst";  // Your Cloudinary cloud name
 const uploadPreset = "gallery"; // Your upload preset
-let imagePublicIds = JSON.parse(localStorage.getItem('imagePublicIds')) || [];
+let imagePublicIds = JSON.parse(localStorage.getItem('imagePublicIds')) || [];  // Global variable
+
 // Function to handle the image upload
 function uploadImage() {
     const fileInput = document.getElementById('imageInput');
@@ -26,6 +27,10 @@ function uploadImage() {
                 const imageUrl = data.secure_url;  // URL of the uploaded image
                 const publicId = data.public_id;  // Cloudinary public ID of the image
 
+                // Save the public ID to localStorage
+                imagePublicIds.push(publicId);
+                localStorage.setItem('imagePublicIds', JSON.stringify(imagePublicIds));
+
                 // Call the display function to show the image in the gallery
                 displayImage(imageUrl, publicId);
             })
@@ -37,7 +42,6 @@ function uploadImage() {
         alert("Please select an image.");
     }
 }
-
 
 // Function to display the uploaded image in the gallery
 function displayImage(imageUrl, publicId) {
@@ -68,7 +72,6 @@ function displayImage(imageUrl, publicId) {
     imageGallery.appendChild(imageCard);
 }
 
-
 // Delete image functionality
 function deleteImage(imageCard, publicId) {
     // Remove image from Cloudinary using DELETE API
@@ -96,7 +99,6 @@ function deleteImage(imageCard, publicId) {
     localStorage.setItem('imagePublicIds', JSON.stringify(imagePublicIds));  // Update localStorage
 }
 
-
 // Enable/Disable upload button based on file selection
 document.getElementById('imageInput').addEventListener('change', function () {
     const uploadButton = document.getElementById('uploadButton');
@@ -110,17 +112,13 @@ document.getElementById('imageInput').addEventListener('change', function () {
 // Event listener for the upload button
 document.getElementById('uploadButton').addEventListener('click', uploadImage);
 
+// Load images on page load (fetch from localStorage)
 window.onload = function () {
-    // Get stored image public_ids from local storage (if any)
-    const storedPublicIds = localStorage.getItem('imagePublicIds');
-    if (storedPublicIds) {
-        const imagePublicIds = JSON.parse(storedPublicIds);
-        
-        // Display all stored images on page load by fetching URLs using the public_id
+    if (imagePublicIds.length > 0) {
         imagePublicIds.forEach(publicId => {
-            const imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/v1/${publicId}.jpg`;  // Adjust as necessary based on Cloudinary's URL structure
+            // Construct the image URL for each publicId
+            const imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/v1/${publicId}.jpg`;  
             displayImage(imageUrl, publicId);
         });
     }
 };
-
