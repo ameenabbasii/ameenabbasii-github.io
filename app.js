@@ -117,7 +117,7 @@ window.onload = function () {
     if (imagePublicIds.length > 0) {
         imagePublicIds.forEach(publicId => {
             // Construct the image URL for each publicId
-            const imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/v1/${publicId}.jpg`;  
+            const imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${publicId}.jpg`;  // Cloudinary URL format
             displayImage(imageUrl, publicId);
         });
     }
