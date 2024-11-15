@@ -1,8 +1,8 @@
 const cloudName = "dvkugkqst"; 
 const uploadPreset = "gallery"; 
 
-// Array to store the image URLs
-let imageUrls = [];
+// Array to store the public_ids of images
+let imagePublicIds = [];
 
 // Function to handle the image upload
 function uploadImage() {
@@ -26,17 +26,17 @@ function uploadImage() {
             })
             .then(response => response.json())
             .then(data => {
-                // Get the secure URL of the uploaded image
-                const imageUrl = data.secure_url;
+                // Get the public_id of the uploaded image
+                const publicId = data.public_id;
 
-                // Add the new image URL to the array
-                imageUrls.push(imageUrl);
+                // Add the new image public_id to the array
+                imagePublicIds.push(publicId);
 
-                // Store the image URLs in local storage (optional, for persistence on page reload)
-                localStorage.setItem('imageUrls', JSON.stringify(imageUrls));
+                // Store the image public_ids in localStorage (for persistence on page reload)
+                localStorage.setItem('imagePublicIds', JSON.stringify(imagePublicIds));
 
                 // Display the uploaded image
-                displayImage(imageUrl, data.public_id); // Pass public_id for future deletion
+                displayImage(publicId);
             })
             .catch(error => {
                 console.error("Error uploading image:", error);
@@ -48,18 +48,19 @@ function uploadImage() {
 }
 
 // Function to display the uploaded image in the gallery
-function displayImage(url, publicId) {
+function displayImage(publicId) {
     const imageGallery = document.getElementById('imageGallery');
     
+    // Create the image URL using Cloudinary's URL format
+    const imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${publicId}.jpg`;
+
     const imageCard = document.createElement('div');
     imageCard.classList.add('image-card');
     imageCard.setAttribute('data-public-id', publicId);  // Store public_id for future deletion
 
     const imgElement = document.createElement('img');
-    imgElement.src = url;
+    imgElement.src = imageUrl;
     imgElement.alt = 'Uploaded Image';
-    imgElement.style.width = "500px"; // Adjust the size
-    imgElement.style.margin = "0px";
 
     const deleteButton = document.createElement('button');
     deleteButton.classList.add('delete-button');
@@ -80,9 +81,9 @@ function displayImage(url, publicId) {
 
 // Delete image functionality
 function deleteImage(imageCard, publicId) {
-    // Optional: Remove image from Cloudinary using DELETE API
+    // Remove image from Cloudinary using DELETE API
     const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`;
-    
+
     // FormData for DELETE request
     const formData = new FormData();
     formData.append('public_id', publicId);
@@ -103,9 +104,9 @@ function deleteImage(imageCard, publicId) {
     // Remove the image card from the DOM
     imageCard.remove();
 
-    // Remove the image URL from the imageUrls array and localStorage
-    imageUrls = imageUrls.filter(url => url !== imageCard.querySelector('img').src);
-    localStorage.setItem('imageUrls', JSON.stringify(imageUrls));
+    // Remove the image public_id from the array and localStorage
+    imagePublicIds = imagePublicIds.filter(id => id !== publicId);
+    localStorage.setItem('imagePublicIds', JSON.stringify(imagePublicIds));
 }
 
 // Enable/Disable upload button based on file selection
@@ -123,15 +124,14 @@ document.getElementById('uploadButton').addEventListener('click', uploadImage);
 
 // Load images on page load (fetch from localStorage or use default array)
 window.onload = function () {
-    // Get stored image URLs from local storage (if any)
-    const storedImages = localStorage.getItem('imageUrls');
-    if (storedImages) {
-        imageUrls = JSON.parse(storedImages);
+    // Get stored image public_ids from local storage (if any)
+    const storedPublicIds = localStorage.getItem('imagePublicIds');
+    if (storedPublicIds) {
+        imagePublicIds = JSON.parse(storedPublicIds);
 
-        // Display all stored images on page load
-        imageUrls.forEach(url => {
-            // Since we don't have the public_id saved, it will be omitted for Cloudinary delete
-            displayImage(url);
+        // Display all stored images on page load by fetching URLs using the public_id
+        imagePublicIds.forEach(publicId => {
+            displayImage(publicId);
         });
     }
 };
