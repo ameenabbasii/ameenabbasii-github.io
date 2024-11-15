@@ -1,6 +1,6 @@
 const cloudName = "dvkugkqst";  // Your Cloudinary cloud name
 const uploadPreset = "gallery"; // Your upload preset
-
+let imagePublicIds = JSON.parse(localStorage.getItem('imagePublicIds')) || [];
 // Function to handle the image upload
 function uploadImage() {
     const fileInput = document.getElementById('imageInput');
@@ -73,12 +73,9 @@ function displayImage(imageUrl, publicId) {
 function deleteImage(imageCard, publicId) {
     // Remove image from Cloudinary using DELETE API
     const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`;
-
-    // FormData for DELETE request
     const formData = new FormData();
     formData.append('public_id', publicId);
 
-    // Send the DELETE request to Cloudinary
     fetch(url, {
         method: 'POST',
         body: formData,
@@ -96,8 +93,9 @@ function deleteImage(imageCard, publicId) {
 
     // Remove the image public_id from the array and localStorage
     imagePublicIds = imagePublicIds.filter(id => id !== publicId);
-    localStorage.setItem('imagePublicIds', JSON.stringify(imagePublicIds));
+    localStorage.setItem('imagePublicIds', JSON.stringify(imagePublicIds));  // Update localStorage
 }
+
 
 // Enable/Disable upload button based on file selection
 document.getElementById('imageInput').addEventListener('change', function () {
@@ -112,16 +110,17 @@ document.getElementById('imageInput').addEventListener('change', function () {
 // Event listener for the upload button
 document.getElementById('uploadButton').addEventListener('click', uploadImage);
 
-// Load images on page load (fetch from localStorage or use default array)
 window.onload = function () {
     // Get stored image public_ids from local storage (if any)
     const storedPublicIds = localStorage.getItem('imagePublicIds');
     if (storedPublicIds) {
-        imagePublicIds = JSON.parse(storedPublicIds);
-
+        const imagePublicIds = JSON.parse(storedPublicIds);
+        
         // Display all stored images on page load by fetching URLs using the public_id
         imagePublicIds.forEach(publicId => {
-            displayImage(publicId);
+            const imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/v1/${publicId}.jpg`;  // Adjust as necessary based on Cloudinary's URL structure
+            displayImage(imageUrl, publicId);
         });
     }
 };
+
